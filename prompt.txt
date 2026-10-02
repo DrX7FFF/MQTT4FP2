@@ -1,0 +1,30 @@
+Objectif : écrire un petit service Python qui lit un capteur de présence Aqara FP2 (Wi-Fi, protocole HomeKit/HAP, en local) et publie ses états sur un broker MQTT, pour Node-RED. Pas de Home Assistant.
+
+Contexte
+- FP2 déjà configuré dans l'app Aqara (zones dessinées et nommées). Pas d'équipement Apple.
+- Le FP2 ne s'appaire qu'à un seul contrôleur HomeKit : ce service en est le contrôleur.
+- Le FP2 expose un capteur de présence global, un capteur de luminosité et un capteur de présence par zone (nom de zone = nom défini dans l'app Aqara).
+- Environnement : Python 3.12, Docker, broker MQTT existant sur le réseau local.
+
+Contraintes techniques
+- Bibliothèque HomeKit : aiohomekit (version 4.0.1 vérifiée : Controller, async_find / async_discover, discovery.async_start_pairing, pairing.subscribe, pairing.dispatcher_connect, get_characteristics, list_accessories_and_characteristics).
+- MQTT : aiomqtt ou paho-mqtt, au choix, mais asyncio de bout en bout.
+- Découverte par mDNS : prévoir le mode réseau "host" dans le docker-compose.
+- Configuration par variables d'environnement : adresse/port du broker, identifiants MQTT, préfixe de topic (défaut "fp2"), chemin du fichier de pairing, niveau de log.
+
+Livrables
+1. `pair.py` : script interactif à lancer une seule fois. Découvre le FP2 sur le réseau, demande le code HomeKit (format XXX-XX-XXX), effectue l'appairage et sauvegarde les données de pairing dans un fichier JSON (volume Docker persistant). Ne jamais écrire le code HomeKit dans les logs.
+2. `dump.py` : affiche toutes les accessories, services et caractéristiques du FP2 (aid, iid, type, nom, valeur). Ne rien supposer sur la structure : le mapping zones/capteurs doit être déduit à l'exécution à partir de ce que le FP2 expose.
+3. `gateway.py` : le service principal.
+   - Charge le pairing, se connecte, s'abonne aux changements d'état (événements, pas de polling sauf secours).
+   - Publie sur MQTT, avec retain, un topic par entité : `<prefix>/presence`, `<prefix>/illuminance`, `<prefix>/zone/<nom_zone_normalisé>`. Payload JSON simple (valeur + timestamp).
+   - Disponibilité : topic `<prefix>/status` (online/offline) avec Last Will MQTT.
+   - Reconnexion automatique au FP2 et au broker avec backoff, sans crash.
+   - Si la liste des accessories change (zones ajoutées ou renommées), la détecter et reconstruire le mapping.
+4. `Dockerfile`, `docker-compose.yml` (network_mode: host, volume pour le pairing), `requirements.txt` (versions épinglées), `README.md` court (installation, appairage, topics publiés).
+
+Règles
+- Code simple, lisible, commenté en français, logs clairs.
+- Pas de dépendance inutile, pas de sur-ingénierie.
+- Avancer étape par étape : d'abord pair.py et dump.py, puis s'arrêter pour que je teste sur le vrai FP2 avant d'écrire gateway.py.
+- Si un point dépend de ce que le FP2 expose réellement, le dire plutôt que d'inventer.
