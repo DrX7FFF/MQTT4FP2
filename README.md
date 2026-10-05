@@ -18,6 +18,13 @@ set +a
 Renseignez les variables de broker dans `.env`. Lancez `pair.py` une seule fois pour l'appairage, puis `dump.py` pour inspecter ce que le FP2 expose avant de démarrer la gateway :
 
 ```sh
+.venv/bin/python3 pair.py
+.venv/bin/python3 dump.py
+.venv/bin/python3 gateway.py
+```
+
+
+```sh
 python pair.py
 python dump.py
 python gateway.py

@@ -121,7 +121,8 @@ async def pair_accessory(args: argparse.Namespace) -> None:
                 code = ask_pairing_code()
                 try:
                     finish_pairing = await discovery.async_start_pairing(args.alias)
-                    await finish_pairing(code)
+                    pairing = await finish_pairing(code)
+                    controller.aliases[args.alias] = pairing
                     controller.save_data(args.pairing_file)
                 except Exception as error:
                     LOGGER.error(
