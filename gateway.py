@@ -16,16 +16,17 @@ from typing import Any
 
 import aiomqtt
 from aiohomekit import Controller
+from aiohomekit.model.characteristics import CharacteristicsTypes
 from aiohomekit.zeroconf import ZeroconfServiceListener
 from zeroconf.asyncio import AsyncServiceBrowser, AsyncZeroconf
 
 
 LOGGER = logging.getLogger("fp2.gateway")
 HAP_SERVICES = ["_hap._tcp.local.", "_hap._udp.local."]
-CHARACTERISTIC_NAME = "00000023-0000-1000-8000-0026BB765291"
-CHARACTERISTIC_CONFIGURED_NAME = "000000E3-0000-1000-8000-0026BB765291"
-CHARACTERISTIC_OCCUPANCY = "00000071-0000-1000-8000-0026BB765291"
-CHARACTERISTIC_LIGHT_LEVEL = "0000006B-0000-1000-8000-0026BB765291"
+CHARACTERISTIC_NAME = CharacteristicsTypes.NAME
+CHARACTERISTIC_CONFIGURED_NAME = CharacteristicsTypes.CONFIGURED_NAME
+CHARACTERISTIC_OCCUPANCY = CharacteristicsTypes.OCCUPANCY_DETECTED
+CHARACTERISTIC_LIGHT_LEVEL = CharacteristicsTypes.LIGHT_LEVEL_CURRENT
 GLOBAL_NAMES = {
     "global occupancy",
     "global presence",

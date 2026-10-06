@@ -10,13 +10,14 @@ import os
 from typing import Any
 
 from aiohomekit import Controller
+from aiohomekit.model.characteristics import CharacteristicsTypes
 from aiohomekit.zeroconf import ZeroconfServiceListener
 from zeroconf.asyncio import AsyncServiceBrowser, AsyncZeroconf
 
 
 LOGGER = logging.getLogger("fp2.dump")
 HAP_SERVICES = ["_hap._tcp.local.", "_hap._udp.local."]
-NAME_CHARACTERISTIC = "00000023-0000-1000-8000-0026BB765291"
+NAME_CHARACTERISTIC = CharacteristicsTypes.NAME
 
 
 def parse_args() -> argparse.Namespace:
