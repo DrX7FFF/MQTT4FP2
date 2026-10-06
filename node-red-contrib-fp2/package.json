@@ -1,0 +1,12 @@
+{
+  "name": "node-red-contrib-fp2",
+  "version": "0.1.0",
+  "description": "Minimal Aqara FP2 HomeKit input for Node-RED using an existing aiohomekit pairing",
+  "main": "fp2.js",
+  "files": ["fp2.js", "fp2.html", "README.md"],
+  "keywords": ["node-red", "aqara", "fp2", "homekit"],
+  "engines": { "node": ">=18" },
+  "scripts": { "test": "node --test" },
+  "dependencies": { "hap-controller": "0.10.2" },
+  "node-red": { "nodes": { "fp2": "fp2.js" } }
+}
