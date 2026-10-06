@@ -19,6 +19,34 @@ Redemarrer Node-RED. Ajouter le noeud **FP2 zones** de la categorie des entrees
 et le relier a un noeud **debug**, configure pour afficher le message complet.
 Le module local doit rester accessible a Node-RED.
 
+## Installation sous Docker / Linux
+
+Placer le dossier du module dans le volume persistant pour qu'il soit accessible
+dans le conteneur sous `/data/node-red-contrib-fp2`, et le pairing reel sous
+`/data/fp2-pairing.json` (lisible par Node-RED).
+
+/data/
+├── node-red-contrib-fp2/
+│   ├── package.json
+│   ├── fp2.js
+│   └── fp2.html
+└── fp2-pairing.json
+
+
+Dans une console **exec** du conteneur :
+
+```sh
+cd /data
+npm install --ignore-scripts ./node-red-contrib-fp2
+```
+
+Redemarrer le conteneur. Dans Node-RED, ajouter **FP2 zones**, renseigner
+**Pairing** avec `/data/fp2-pairing.json` et l'alias du fichier, puis relier
+la sortie a un **debug** et deployer. Arreter auparavant la gateway Python.
+
+`--ignore-scripts` evite la compilation Bluetooth inutile au transport IP.
+Conserver le dossier du module dans `/data`; ne pas partager le pairing.
+
 ## Configuration
 
 1. Arreter la gateway Python qui utilise la meme identite HomeKit.
